@@ -35,7 +35,7 @@ else $nDelay=0;
  */
 $output = $pin.$nSys.$nGroup.$nSwitch.$nAction.$nDelay;
 if (strlen($output) >= 5 + (strlen($pin))) {
-  $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
+  $socket = socket_create($IPV6 ? AF_INET6 : AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
   if(!socket_bind($socket, $source)) {
   echo socket_strerror(socket_last_error());
   die(", could not bind to socket\n");
@@ -99,13 +99,16 @@ foreach($config as $current) {
 
     if ($index%2 == 0) echo "<TR>\n";
 
-    $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
- if(!socket_bind($socket, $source)) {
-  echo socket_strerror(socket_last_error());
-  die(", could not bind to socket\n");
-}
+    $socket = socket_create($IPV6 ? AF_INET6 : AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
+	if(!socket_bind($socket, $source)) {
+		echo socket_strerror(socket_last_error());
+		die(", could not bind to socket\n");
+	}
 
-    socket_connect($socket, $target, $port) or die("Could not connect to socket\n");
+	if (!socket_connect($socket, $target, $port)) {
+		echo socket_strerror(socket_last_error());
+		die("Could not connect to socket\n");
+	}
 
     $output = $pin.$iSys.$ig.$is."2";
     socket_write($socket, $output, strlen ($output)) or die("Could not write output\n");

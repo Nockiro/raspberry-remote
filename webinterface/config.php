@@ -15,6 +15,8 @@ $target = '127.0.0.1';
 $port = 11337;
 $pin = 1111;
 
+$IPV6 = true;
+
 /*
  * specify configuration of sockets to use
  *   array("systemcode", "group" , "plug", "description");

@@ -33,10 +33,13 @@ else $nDelay=0;
  * then reload the webpage without parameters
  * except for delay
  */
-$output = $nSys.$nGroup.$nSwitch.$nAction.$nDelay;
-if (strlen($output) >= 5) {
+$output = $pin.$nSys.$nGroup.$nSwitch.$nAction.$nDelay;
+if (strlen($output) >= 5 + (strlen($pin))) {
   $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
-  socket_bind($socket, $source) or die("Could not bind to socket\n");
+  if(!socket_bind($socket, $source)) {
+  echo socket_strerror(socket_last_error());
+  die(", could not bind to socket\n");
+}
   socket_connect($socket, $target, $port) or die("Could not connect to socket\n");
   socket_write($socket, $output, strlen ($output)) or die("Could not write output\n");
   socket_close($socket);
@@ -97,10 +100,14 @@ foreach($config as $current) {
     if ($index%2 == 0) echo "<TR>\n";
 
     $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or die("Could not create socket\n");
-    socket_bind($socket, $source) or die("Could not bind to socket\n");
+ if(!socket_bind($socket, $source)) {
+  echo socket_strerror(socket_last_error());
+  die(", could not bind to socket\n");
+}
+
     socket_connect($socket, $target, $port) or die("Could not connect to socket\n");
 
-    $output = $iSys.$ig.$is."2";
+    $output = $pin.$iSys.$ig.$is."2";
     socket_write($socket, $output, strlen ($output)) or die("Could not write output\n");
     $state = socket_read($socket, 2048);
     if ($state == 0) {

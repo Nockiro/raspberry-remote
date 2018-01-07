@@ -8,6 +8,8 @@ int nPlugs;
 int nTimeout;
 int PORT = 11337;
 int GPIO_PIN = 0;
+int PIN = 1111;
+int PIN_LENGTH = 4;
 
 int start_listen();
 void setup_socket();

@@ -122,24 +122,31 @@ int start_listen()
 		* get values
 		*/
 		if (verboseOutput)
-			printf("message: %s\n", buffer);
+			printf("message: %s, pin length %d\n", buffer, PIN_LENGTH);
 		
-        if (strlen(buffer) >= 5)
+        if (strlen(buffer) >= (unsigned)5 + PIN_LENGTH)
         {
-            nSys = buffer[0] - 48;
+			int read_pin = ((buffer[0] - 48) * 1000 + (buffer[1]- 48) * 100 + (buffer[2] - 48)* 10 + (buffer[3]- 48));
+			if (read_pin != PIN) {
+                printf("PIN %d is incorrect! Disconnecting\n", read_pin);
+				close(newsockfd);
+			}
+			
+			// -48 because the buffer elements are ascii chars, numbers start at 48
+            nSys = buffer[0 + PIN_LENGTH] - 48;
             switch (nSys)
             {
                 // normal elro
                 case 1:
                 {
-                    for (int i = 1; i < 6; i++)
+                    for (int i = 1 + PIN_LENGTH; i < 6 + PIN_LENGTH; i++)
                     {
                         nGroup[i - 1] = buffer[i];
                     }
-                    nGroup[5] = '\0';
-                    nSwitchNumber = (buffer[6] - 48) * 10;
-                    nSwitchNumber += (buffer[7] - 48);
-                    nAction = buffer[8] - 48;
+                    nGroup[5 + PIN_LENGTH] = '\0';
+                    nSwitchNumber = (buffer[6 + PIN_LENGTH] - 48) * 10;
+                    nSwitchNumber += (buffer[7 + PIN_LENGTH] - 48);
+                    nAction = buffer[8 + PIN_LENGTH] - 48;
                     nTimeout = 0;
 					if (verboseOutput) {
 						printf("nSys: %i\n", nSys);
@@ -148,12 +155,12 @@ int start_listen()
 						printf("nAction: %i\n", nAction);
 					}
 
-                    if (strlen(buffer) >= 10)
-                        nTimeout = buffer[9] - 48;
-                    if (strlen(buffer) >= 11)
-                        nTimeout = nTimeout * 10 + buffer[10] - 48;
-                    if (strlen(buffer) >= 12)
-                        nTimeout = nTimeout * 10 + buffer[11] - 48;
+                    if (strlen(buffer) >= ((unsigned)10 + PIN_LENGTH))
+                        nTimeout = buffer[9 + PIN_LENGTH] - 48;
+                    if (strlen(buffer) >= ((unsigned)11 + PIN_LENGTH))
+                        nTimeout = nTimeout * 10 + buffer[10 + PIN_LENGTH] - 48;
+                    if (strlen(buffer) >= ((unsigned)12 + PIN_LENGTH))
+                        nTimeout = nTimeout * 10 + buffer[11 + PIN_LENGTH] - 48;
 
                     /**
 					* handle messages
@@ -212,12 +219,12 @@ int start_listen()
                 // Intertechno
                 case 2:
                 {
-                    nGroup[0] = buffer[1];
-                    nGroup[1] = buffer[2];
+                    nGroup[0] = buffer[1 + PIN_LENGTH];
+                    nGroup[1] = buffer[2 + PIN_LENGTH];
                     nGroup[2] = '\0';
-                    nSwitchNumber = (buffer[3] - 48) * 10;
-                    nSwitchNumber += (buffer[4] - 48);
-                    nAction = buffer[5] - 48;
+                    nSwitchNumber = (buffer[3 + PIN_LENGTH] - 48) * 10;
+                    nSwitchNumber += (buffer[4 + PIN_LENGTH] - 48);
+                    nAction = buffer[5 + PIN_LENGTH] - 48;
                     nTimeout = 0;
 					if (verboseOutput) {
 						printf("nSys: %i\n", nSys);

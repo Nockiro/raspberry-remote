@@ -139,11 +139,11 @@ int start_listen()
                 // normal elro
                 case 1:
                 {
-                    for (int i = 1 + PIN_LENGTH; i < 6 + PIN_LENGTH; i++)
+                    for (int i = 1; i < 6; i++)
                     {
-                        nGroup[i - 1] = buffer[i];
+                        nGroup[i - 1] = buffer[i + PIN_LENGTH];
                     }
-                    nGroup[5 + PIN_LENGTH] = '\0';
+                    nGroup[5] = '\0';
                     nSwitchNumber = (buffer[6 + PIN_LENGTH] - 48) * 10;
                     nSwitchNumber += (buffer[7 + PIN_LENGTH] - 48);
                     nAction = buffer[8 + PIN_LENGTH] - 48;

@@ -9,6 +9,8 @@ int nTimeout;
 int PORT = 11337;
 int GPIO_PIN = 0;
 
+int start_listen();
+void setup_socket();
 void error(const char *msg);
 int getAddrElro(const char* nGroup, int nSwitchNumber);
 int getAddrInt(const char* nGroup, int nSwitchNumber);
